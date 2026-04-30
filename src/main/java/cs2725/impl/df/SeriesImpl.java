@@ -19,6 +19,7 @@ import cs2725.api.functional.PrefixOperator;
 import cs2725.api.functional.ValueMapper;
 import cs2725.impl.ArrayList;
 import cs2725.impl.ImmutableList;
+import cs2725.impl.HashSet;
 
 /**
  * Implementation of a Series that maintains values and an index.
@@ -109,8 +110,6 @@ public class SeriesImpl<T> implements Series<T> {
 
     @Override
     public List<T> values() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
 
         // This method returns a new list containing the values of the Series,
         // in the order specified by the index list.
@@ -126,12 +125,22 @@ public class SeriesImpl<T> implements Series<T> {
         // If index = [0, 1, 3] and values = [5, 6, 7, 8], return [5, 6, 8].
         //
         // Return a new ImmutableList<T> containing the indexed values.
+
+        
+        //creates an array the size of the output/index
+        List<T> result = new ArrayList<>(size());
+        //iterates through array and adds the item
+        for (int i = 0; i < size(); i++){
+            result.insertItem(get(i));
+
+        }
+
+        return ImmutableList.of(result);
+
     }
 
     @Override
     public Set<T> unique() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
 
         // This method returns a Set containing the unique values in the Series.
         // Only the values referenced by the index should be considered.
@@ -147,6 +156,15 @@ public class SeriesImpl<T> implements Series<T> {
         // The result should be a Set containing [1, 2]
         //
         // Use a HashSet<T> to collect unique elements.
+        Set<T> result = new HashSet<>(size());
+        for (int i = 0; i < size(); i++) {
+            result.add(get(i));
+
+        }
+        return result;
+   
+
+
     }
 
     @Override
