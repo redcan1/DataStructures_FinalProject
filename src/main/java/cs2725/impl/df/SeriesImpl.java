@@ -169,9 +169,6 @@ public class SeriesImpl<T> implements Series<T> {
 
     @Override
     public Series<T> withIndex(List<Integer> newIndex) {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Returns a new Series whose index is obtained by selecting positions from
         // the current Series according to newIndex.
         //
@@ -188,6 +185,24 @@ public class SeriesImpl<T> implements Series<T> {
         //
         // If any value in newIndex is out of bounds for the current Series (i.e., < 0
         // or ≥ size()), the method must throw IllegalArgumentException.
+        if (newIndex == null) {
+            throw new IllegalArgumentException("newIndex cannot be null.");
+        }
+
+        List<Integer> newSeriesIndex = new ArrayList<>(newIndex.size());
+
+        for (int i = 0; i < newIndex.size(); i++) {
+            int pos = newIndex.getItem(i);
+
+            if (pos < 0 || pos >= size()) {
+                throw new IllegalArgumentException("Index out of bounds: " + pos);
+            }
+
+            int actual = index.getItem(pos);
+
+            newSeriesIndex.insertItem(actual);
+        }
+        return new SeriesImpl<>(newSeriesIndex, values);
     }
 
     @Override
@@ -229,9 +244,6 @@ public class SeriesImpl<T> implements Series<T> {
 
     @Override
     public Series<T> selectByMask(Series<Boolean> mask) {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Returns a new Series containing only the elements whose corresponding
         // mask values are true.
         //
@@ -246,6 +258,25 @@ public class SeriesImpl<T> implements Series<T> {
         // Resulting Series should reference values [20, 10], with updated index [1, 0]
         //
         // Do not change the original values list; just build a new index.
+        if (mask == null) {
+            throw new IllegalArgumentException("Mask cannot be null.");
+        }
+
+        if (mask.size() != size()) {
+            throw new IllegalArgumentException("Mask size must match series size.");
+        }
+
+        List<Integer> newIndex = new ArrayList<>();
+
+        for (int i = 0; i < size(); i++) {
+            Boolean keep = mask.get(i);
+
+            if (Boolean.TRUE.equals(keep)) {
+                int actualIndex = index.getItem(i);
+                newIndex.insertItem(actualIndex);
+            }
+        }
+        return new SeriesImpl<>(newIndex, values);
     }
 
     @Override
@@ -262,82 +293,140 @@ public class SeriesImpl<T> implements Series<T> {
 
     @Override
     public double sum() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        double sum = 0;
+        for (T val : this) {
+            sum += this.asDouble(val);
+        }
+        return sum;
     }
 
     @Override
     public long count() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        long count = 0;
+        for (T val : this) {
+            this.asDouble(val);
+            count++;
+        }
+        return count;
     }
 
     @Override
     public double mean() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        if (size() == 0) {
+            throw new IllegalArgumentException("Empty series.");
+        }
+
+        double sum = 0;
+        for (T val : this) {
+            sum += this.asDouble(val);
+        }
+        return sum/size();
     }
 
     @Override
     public double min() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+           if (size() == 0) {
+            throw new IllegalArgumentException("Empty series.");
+        }
+
+        Iterator<T> iterator = this.iterator();
+        double min = this.asDouble(iterator.next());
+
+        while (iterator.hasNext()) {
+            double x = this.asDouble(iterator.next());
+            if (x < min) {
+                min = x;
+            }
+        }
+        return min;
     }
 
     @Override
     public double max() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        if (size() == 0) {
+            throw new IllegalArgumentException("Empty series.");
+        }
+
+        Iterator<T> iterator = this.iterator();
+        double max = this.asDouble(iterator.next());
+
+        while (iterator.hasNext()) {
+            double x = this.asDouble(iterator.next());
+            if (x > max) {
+                max = x;
+            }
+        }
+        return max;
     }
 
     @Override
     public double var() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        if (size() < 2) {
+            throw new IllegalArgumentException("Variance requires at least 2 values.");
+        }
+
+        double mean = mean();
+        double sumSquare = 0;
+
+        for (T val : this) {
+            double x = this.asDouble(val);
+            sumSquare += (x - mean)*(x - mean);
+        }
+        return sumSquare/(size() - 1);
     }
 
     @Override
     public double std() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        return Math.sqrt(var());
     }
 
     @Override
     public double median() {
-        // Todo: Project 2: To be implemented.
-        throw new UnsupportedOperationException("To be implemented...");
-
         // Note: This function should only consider values referenced by the index.
         // Note: The series can hold any type of values. Attempt to convert values to
         // double by using Series.asDouble(x) function.
+        if (size() == 0) {
+            throw new IllegalArgumentException("Empty series.");
+        }
+
+        List<Double> temp = new ArrayList<>(size());
+
+        for (T val : this) {
+            temp.insertItem(this.asDouble(val));
+        }
+
+        temp.sort((a, b) -> Double.compare(a, b));
+
+        int n = temp.size();
+
+        if (n % 2 == 1) {
+            return temp.getItem(n / 2);
+        } else {
+            double a = temp.getItem(n / 2 - 1);
+            double b = temp.getItem(n / 2);
+            return (a + b) / 2.0;
+        }
     }
 
     @Override
